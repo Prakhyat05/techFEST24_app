@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
 import 'HomePage.dart';
+import 'Services/Auth.dart';
 import 'SignupPage.dart';
 
 class LoginDemo extends StatefulWidget {
+  const LoginDemo({super.key});
+
   @override
   _LoginDemoState createState() => _LoginDemoState();
 }
 
 class _LoginDemoState extends State<LoginDemo> {
+  String email = "";
+  String pass = "";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.indigo[800],
       appBar: AppBar(
-        title: Container(
+        title: SizedBox(
           width: 160,
           height: 100,
           child: Image.asset("assets/techfest24 name.png"),
@@ -23,7 +28,7 @@ class _LoginDemoState extends State<LoginDemo> {
         child: Column(
           children: <Widget>[
             Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                   image: DecorationImage(
                       image: AssetImage("assets/space2.jpg"),
                       fit: BoxFit.cover)),
@@ -31,7 +36,7 @@ class _LoginDemoState extends State<LoginDemo> {
             Padding(
               padding: const EdgeInsets.only(top: 70.0),
               child: Center(
-                child: Container(
+                child: SizedBox(
                     width: 200,
                     height: 150,
                     /*decoration: BoxDecoration(
@@ -40,11 +45,16 @@ class _LoginDemoState extends State<LoginDemo> {
                     child: Image.asset("assets/techFEST'24 logo.png")),
               ),
             ),
-            SizedBox(height: 50),
+            const SizedBox(height: 50),
             Padding(
               //padding: const EdgeInsets.only(left:15.0,right: 15.0,top:0,bottom: 0),
               padding: EdgeInsets.symmetric(horizontal: 15),
               child: TextField(
+                onChanged: (s) {
+                  setState(() {
+                    email = s;
+                  });
+                },
                 style: TextStyle(color: Colors.white),
                 decoration: InputDecoration(
                     border: OutlineInputBorder(),
@@ -55,10 +65,11 @@ class _LoginDemoState extends State<LoginDemo> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(
-                  left: 15.0, right: 15.0, top: 15, bottom: 0),
+              padding:
+                  EdgeInsets.only(left: 15.0, right: 15.0, top: 15, bottom: 0),
               //padding: EdgeInsets.symmetric(horizontal: 15),
               child: TextField(
+                onChanged: (x) => pass = x,
                 obscureText: true,
                 decoration: InputDecoration(
                     border: OutlineInputBorder(),
@@ -68,17 +79,17 @@ class _LoginDemoState extends State<LoginDemo> {
                     hintText: 'Enter secure password'),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             TextButton(
               onPressed: () {},
-              child: Text(
+              child: const Text(
                 'Forgot Password',
                 style: TextStyle(color: Colors.blue, fontSize: 15),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 20,
             ),
             Container(
@@ -91,21 +102,26 @@ class _LoginDemoState extends State<LoginDemo> {
                   Navigator.push(
                       context, MaterialPageRoute(builder: (_) => HomePage()));
                 },
-                child: Text(
+                child: const Text(
                   'Login',
                   style: TextStyle(color: Colors.white, fontSize: 25),
                 ),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 70,
             ),
             TextButton(
               onPressed: () {
-                Navigator.push(
-                    context, MaterialPageRoute(builder: (_) => RegisterPage()));
+                Auth()
+                    .SignIn(SigninInfo(email, pass))
+                    .then((_) => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (_) => const RegisterPage())))
+                    .onError((_, _a) {});
               },
-              child: Text(
+              child: const Text(
                 'New user? Create account',
                 style: TextStyle(color: Colors.white, fontSize: 15),
               ),
