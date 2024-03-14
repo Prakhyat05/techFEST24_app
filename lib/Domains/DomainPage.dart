@@ -63,8 +63,9 @@ class Domain {
 
   static Future<List<Domain>> getAll() async {
     final resp =
-        await http.get(Uri.parse("${auth.baseUrl}/domain/getAllDomains"));
-
+        await http.get(Uri.parse("${auth.baseUrl}domain/getAllDomains"));
+    print(resp.statusCode);
+    print(resp.body);
     final parsedResp = (jsonDecode(resp.body) as List<dynamic>).cast<Domain>();
 
     return parsedResp;

@@ -125,7 +125,7 @@ class _RegisterPageState extends State<RegisterPage> {
                 initialSelection:CoordinatorType.Domain,
                 controller: typeController,
                 requestFocusOnTap: true,
-                label: const Text('Color'),
+                label: const Text('Coordinator Type'),
                 dropdownMenuEntries: CoordinatorType.values
                     .map<DropdownMenuEntry<CoordinatorType>>(
                         (CoordinatorType color) {

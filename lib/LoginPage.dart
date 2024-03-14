@@ -92,14 +92,14 @@ class _LoginDemoState extends State<LoginDemo> {
               decoration: BoxDecoration(
                   color: Colors.blue, borderRadius: BorderRadius.circular(20)),
               child: TextButton(
-                onPressed: () {
-                  Auth()
+                onPressed: () async {
+                  await Auth()
                       .SignIn(SigninInfo(email, pass))
                       .then((_) => Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (_) => const RegisterPage())))
-                      .onError((_, _a) {});
+                              builder: (_) => const HomePage())))
+                      .onError((e, a) {print("Fked up: $e, $a");});
                 },
                 child: const Text(
                   'Login',
