@@ -10,14 +10,12 @@ Domain _$DomainFromJson(Map<String, dynamic> json) => Domain(
       json['domainName'] as String,
       json['domainInfo'] as String,
       (json['facultyCoordinator'] as List<dynamic>)
-          .map((e) => Coordinator.fromJson(e as Map<String, dynamic>))
+          .map((e) => e as String)
           .toList(),
       (json['studentCoordinator'] as List<dynamic>)
-          .map((e) => Coordinator.fromJson(e as Map<String, dynamic>))
+          .map((e) => e as String)
           .toList(),
-      (json['events'] as List<dynamic>)
-          .map((e) => Event.fromJson(e as Map<String, dynamic>))
-          .toList(),
+      (json['events'] as List<dynamic>).map((e) => e as String).toList(),
       json['_id'] as String,
     );
 
