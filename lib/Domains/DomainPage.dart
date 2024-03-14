@@ -11,6 +11,8 @@ import 'package:json_annotation/json_annotation.dart';
 import '../Services/Auth.dart' as auth;
 import '../Services/Auth.dart';
 
+part 'DomainPage.g.dart';
+
 class DomainPage extends StatelessWidget {
   final Domain domain;
 
@@ -67,6 +69,10 @@ class Domain {
 
     return parsedResp;
   }
+
+  factory Domain.fromJson(Map<String, dynamic> json) => _$DomainFromJson(json);
+
+  Map<String, dynamic> toJson() => _$DomainToJson(this);
 }
 
 @JsonSerializable()
@@ -115,6 +121,10 @@ class Event {
     final parsedResp = jsonDecode(bodyString) as List<Event>;
     return parsedResp;
   }
+
+  factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
+
+  Map<String, dynamic> toJson() => _$EventToJson(this);
 }
 
 @JsonSerializable()
@@ -150,6 +160,11 @@ class Workshop {
       this.studentCoordinator,
       this.techbucksReward,
       this.id);
+
+  factory Workshop.fromJson(Map<String, dynamic> json) =>
+      _$WorkshopFromJson(json);
+
+  Map<String, dynamic> toJson() => _$WorkshopToJson(this);
 }
 
 @JsonSerializable()
@@ -188,6 +203,9 @@ class User {
       this.events,
       this.workshops,
       this.id);
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UserToJson(this);
 }
 
 class DomainButton extends StatelessWidget {

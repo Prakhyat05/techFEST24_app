@@ -27,12 +27,6 @@ class _LoginDemoState extends State<LoginDemo> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            Container(
-              decoration: const BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage("assets/space2.jpg"),
-                      fit: BoxFit.cover)),
-            ),
             Padding(
               padding: const EdgeInsets.only(top: 70.0),
               child: Center(
@@ -99,8 +93,13 @@ class _LoginDemoState extends State<LoginDemo> {
                   color: Colors.blue, borderRadius: BorderRadius.circular(20)),
               child: TextButton(
                 onPressed: () {
-                  Navigator.push(
-                      context, MaterialPageRoute(builder: (_) => HomePage()));
+                  Auth()
+                      .SignIn(SigninInfo(email, pass))
+                      .then((_) => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const RegisterPage())))
+                      .onError((_, _a) {});
                 },
                 child: const Text(
                   'Login',
@@ -113,13 +112,8 @@ class _LoginDemoState extends State<LoginDemo> {
             ),
             TextButton(
               onPressed: () {
-                Auth()
-                    .SignIn(SigninInfo(email, pass))
-                    .then((_) => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const RegisterPage())))
-                    .onError((_, _a) {});
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const RegisterPage()));
               },
               child: const Text(
                 'New user? Create account',
