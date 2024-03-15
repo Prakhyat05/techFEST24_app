@@ -11,6 +11,8 @@ import 'package:json_annotation/json_annotation.dart';
 import '../Services/Auth.dart' as auth;
 import '../Services/Auth.dart';
 
+part 'DomainPage.g.dart';
+
 class DomainPage extends StatelessWidget {
   final Domain domain;
 
@@ -35,6 +37,7 @@ class DomainPage extends StatelessWidget {
               return ListView.builder(
                   itemCount: snapshot.data?.length,
                   itemBuilder: (_, i) {
+                    print(snapshot.data?[i]);
                     return DomainButton(
                         event: snapshot.data![i],
                         color:
@@ -52,21 +55,35 @@ class Domain {
   final String id;
   final String domainName;
   final String domainInfo;
-  final List<Coordinator> facultyCoordinator;
-  final List<Coordinator> studentCoordinator;
-  final List<Event> events;
+  final List<String> facultyCoordinator;
+  final List<String> studentCoordinator;
+  final List<String> events;
 
   Domain(this.domainName, this.domainInfo, this.facultyCoordinator,
       this.studentCoordinator, this.events, this.id);
 
   static Future<List<Domain>> getAll() async {
     final resp =
-        await http.get(Uri.parse("${auth.baseUrl}/domain/getAllDomains"));
+        await http.get(Uri.parse("${auth.baseUrl}domain/getAllDomains"));
+    print(resp.statusCode);
+    print(resp.body);
 
-    final parsedResp = (jsonDecode(resp.body) as List<dynamic>).cast<Domain>();
+    List<Domain> parsedResp;
+    print((jsonDecode(resp.body) as List<dynamic>));
+    print((jsonDecode(resp.body) as List<dynamic>).map((e) => Domain.fromJson(e)));
+    try {
+      parsedResp = (jsonDecode(resp.body) as List<dynamic>).map((e) => Domain.fromJson(e)).toList();
+    } catch (err) {
+      print(err);
+      throw(err);
+    }
 
     return parsedResp;
   }
+
+  factory Domain.fromJson(Map<String, dynamic> json) => _$DomainFromJson(json);
+
+  Map<String, dynamic> toJson() => _$DomainToJson(this);
 }
 
 @JsonSerializable()
@@ -107,14 +124,20 @@ class Event {
 
   static Future<List<Event>> getAll(Domain domain) async {
     Request req =
-        Request("POST", Uri.parse("${auth.baseUrl}/event/getByDomain"));
-    req.body = '{"domainId": ${domain.id}}';
+        Request("POST", Uri.parse("${auth.baseUrl}event/getByDomain"));
+    print("${auth.baseUrl}event/getByDomain");
+    req.body = '{"domainId": "${domain.id}"}';
     req.headers["Content-Type"] = "application/json";
     final resp = await req.send();
     final bodyString = await resp.stream.bytesToString();
-    final parsedResp = jsonDecode(bodyString) as List<Event>;
+    print(bodyString);
+    final parsedResp = jsonDecode(bodyString).data as List<Event>;
     return parsedResp;
   }
+
+  factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
+
+  Map<String, dynamic> toJson() => _$EventToJson(this);
 }
 
 @JsonSerializable()
@@ -150,6 +173,11 @@ class Workshop {
       this.studentCoordinator,
       this.techbucksReward,
       this.id);
+
+  factory Workshop.fromJson(Map<String, dynamic> json) =>
+      _$WorkshopFromJson(json);
+
+  Map<String, dynamic> toJson() => _$WorkshopToJson(this);
 }
 
 @JsonSerializable()
@@ -188,6 +216,9 @@ class User {
       this.events,
       this.workshops,
       this.id);
+  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UserToJson(this);
 }
 
 class DomainButton extends StatelessWidget {

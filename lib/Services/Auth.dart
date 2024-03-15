@@ -1,10 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:techfest_24/Domains/DomainPage.dart';
+
+part "Auth.g.dart";
 
 const baseUrl = "https://www.techfestsliet.org/api/";
 
@@ -29,23 +32,27 @@ class Auth {
     Response resp;
     try {
       resp = await http.post(Uri.parse("$baseUrl/coor/sign-in"),
-          body: jsonEncode(info));
-      print(resp);
+          body: info.toJson());
+      print(resp.body);
     } catch (err) {
       print(err);
       throw err;
     }
     if (resp.statusCode == 200) {
-      final respParsed = jsonDecode(resp.body) as SigninResp;
+      final respParsed = SigninResp.fromJson(jsonDecode(resp.body));
       currentJwt = respParsed.token;
       try {
+        print("${baseUrl}coordinator/getById/${respParsed.coordinatorId}");
         resp = await http
-            .post(Uri.parse("$baseUrl/getById/${respParsed.coordinatorId}"));
+            .get(Uri.parse("${baseUrl}coordinator/getById/${respParsed.coordinatorId}"));
       } catch (err) {
         print(err);
         throw err;
       }
-      currentUser = jsonDecode(resp.body) as Coordinator;
+      print(resp.body);
+      print(jsonDecode(resp.body));
+      currentUser = Coordinator.fromJson(jsonDecode(resp.body)["coordinator"]);
+      print(currentUser);
     } else {
       throw "Failed to authenticate";
     }
@@ -72,57 +79,74 @@ class Auth {
   }
 }
 
+@JsonSerializable()
 class SigninInfo {
-  final String mail;
-  final String pass;
-  SigninInfo(this.mail, this.pass);
+  final String email;
+  final String password;
+  SigninInfo(this.email, this.password);
+  factory SigninInfo.fromJson(Map<String, dynamic> json) =>
+      _$SigninInfoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SigninInfoToJson(this);
 }
 
+@JsonSerializable()
 class SigninResp {
   final String token;
   final String coordinatorId;
-  final String domain;
+  final String coordinatorDomain;
+  final int coordinatorRole;
 
-  SigninResp(this.token, this.coordinatorId, this.domain);
+  SigninResp(this.token, this.coordinatorId, this.coordinatorDomain,
+      this.coordinatorRole);
+
+  factory SigninResp.fromJson(Map<String, dynamic> json) =>
+      _$SigninRespFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SigninRespToJson(this);
 }
 
+@JsonSerializable()
 class SignupInfo {
   final String name;
-  final String rank;
   final String mail;
   final String phone;
   final String branch;
   final String type;
-  final String domain;
+  final String? domain;
+  final String? event;
 
-  SignupInfo(this.name, this.rank, this.mail, this.phone, this.branch,
-      this.type, this.domain);
+  SignupInfo(
+      {required this.name,
+      required this.mail,
+      required this.phone,
+      required this.branch,
+      required this.type,
+      this.domain,
+      this.event});
 
-  Map<String, dynamic> toJson() => {
-        "name": name,
-        "rank": rank,
-        "mail": mail,
-        "phone": phone,
-        "branch": branch,
-        "type": type,
-        "domain": domain,
-      };
+  factory SignupInfo.fromJson(Map<String, dynamic> json) =>
+      _$SignupInfoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SignupInfoToJson(this);
 }
 
 @JsonSerializable()
 class Coordinator {
   @JsonKey(name: "_id")
   final String id;
-  final String name;
-  final String rank;
-  final String mail;
-  final String phone;
-  final String branch;
-  final String type;
-  final String domain;
+  final String coordinatorName;
+  final String coordinatorEmail;
+  final int coordinatorPhone;
+  final String coordinatorBranch;
+  final String coordinatorType;
+  final String coordinatorDomain;
 
-  Coordinator(this.name, this.rank, this.mail, this.phone, this.id, this.branch,
-      this.type, this.domain);
+  Coordinator(this.coordinatorName, this.coordinatorEmail, this.coordinatorPhone, this.id, this.coordinatorBranch, this.coordinatorType,
+      this.coordinatorDomain);
 
-  void verifyAttendance(User user) {}
+  factory Coordinator.fromJson(Map<String, dynamic> json) =>
+      _$CoordinatorFromJson(json);
+
+  Map<String, dynamic> toJson() => _$CoordinatorToJson(this);
 }

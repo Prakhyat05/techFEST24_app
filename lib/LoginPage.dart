@@ -27,12 +27,6 @@ class _LoginDemoState extends State<LoginDemo> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            Container(
-              decoration: const BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage("assets/space2.jpg"),
-                      fit: BoxFit.cover)),
-            ),
             Padding(
               padding: const EdgeInsets.only(top: 70.0),
               child: Center(
@@ -98,9 +92,14 @@ class _LoginDemoState extends State<LoginDemo> {
               decoration: BoxDecoration(
                   color: Colors.blue, borderRadius: BorderRadius.circular(20)),
               child: TextButton(
-                onPressed: () {
-                  Navigator.push(
-                      context, MaterialPageRoute(builder: (_) => HomePage()));
+                onPressed: () async {
+                  await Auth()
+                      .SignIn(SigninInfo(email, pass))
+                      .then((_) => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const HomePage())))
+                      .onError((e, a) {print("Fked up: $e, $a");});
                 },
                 child: const Text(
                   'Login',
@@ -113,13 +112,8 @@ class _LoginDemoState extends State<LoginDemo> {
             ),
             TextButton(
               onPressed: () {
-                Auth()
-                    .SignIn(SigninInfo(email, pass))
-                    .then((_) => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => const RegisterPage())))
-                    .onError((_, _a) {});
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => const RegisterPage()));
               },
               child: const Text(
                 'New user? Create account',
